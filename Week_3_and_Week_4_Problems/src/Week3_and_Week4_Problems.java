@@ -2,90 +2,87 @@ import java.util.*;
 
 public class Week3_and_Week4_Problems {
 
-    // Linear Search (first occurrence)
-    static int linearSearch(String[] arr, String target) {
+    // Linear Search (unsorted)
+    static boolean linearSearch(int[] arr, int target) {
         int comparisons = 0;
 
         for (int i = 0; i < arr.length; i++) {
             comparisons++;
-            if (arr[i].equals(target)) {
+            if (arr[i] == target) {
                 System.out.println("Linear comparisons: " + comparisons);
-                return i;
+                return true;
             }
         }
-        return -1;
+
+        System.out.println("Linear comparisons: " + comparisons);
+        return false;
     }
 
-    // Find last occurrence using Linear Search
-    static int linearSearchLast(String[] arr, String target) {
-        int index = -1;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i].equals(target)) {
-                index = i;
-            }
-        }
-        return index;
-    }
-
-    // Binary Search (any occurrence)
-    static int binarySearch(String[] arr, String target) {
+    // Binary Search - find insertion point
+    static int binaryInsertionPoint(int[] arr, int target) {
         int low = 0, high = arr.length - 1;
-        int comparisons = 0;
 
         while (low <= high) {
-            comparisons++;
             int mid = (low + high) / 2;
 
-            if (arr[mid].equals(target)) {
-                System.out.println("Binary comparisons: " + comparisons);
-                return mid;
-            } else if (arr[mid].compareTo(target) < 0) {
+            if (arr[mid] == target) return mid;
+            else if (arr[mid] < target) low = mid + 1;
+            else high = mid - 1;
+        }
+        return low; // insertion index
+    }
+
+    // Floor (largest <= target)
+    static int floor(int[] arr, int target) {
+        int low = 0, high = arr.length - 1;
+        int res = -1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            if (arr[mid] <= target) {
+                res = arr[mid];
                 low = mid + 1;
             } else {
                 high = mid - 1;
             }
         }
-        return -1;
+        return res;
     }
 
-    // Count occurrences using Binary Search expansion
-    static int countOccurrences(String[] arr, String target) {
-        int index = binarySearch(arr, target);
-        if (index == -1) return 0;
+    // Ceiling (smallest >= target)
+    static int ceil(int[] arr, int target) {
+        int low = 0, high = arr.length - 1;
+        int res = -1;
 
-        int count = 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
 
-        int left = index - 1;
-        while (left >= 0 && arr[left].equals(target)) {
-            count++;
-            left--;
+            if (arr[mid] >= target) {
+                res = arr[mid];
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
         }
-
-        int right = index + 1;
-        while (right < arr.length && arr[right].equals(target)) {
-            count++;
-            right++;
-        }
-
-        return count;
+        return res;
     }
 
     public static void main(String[] args) {
 
-        String[] logs = {"accB", "accA", "accB", "accC"};
+        int[] risks = {10, 25, 50, 100};
 
-        // Linear Search (unsorted)
-        System.out.println("Linear First accB: index " + linearSearch(logs, "accB"));
-        System.out.println("Linear Last accB: index " + linearSearchLast(logs, "accB"));
+        // Linear Search (unsorted example)
+        boolean found = linearSearch(risks, 30);
+        System.out.println("Linear search result: " + found);
 
-        // Sort for Binary Search
-        Arrays.sort(logs);
-        System.out.println("Sorted Logs: " + Arrays.toString(logs));
+        // Binary operations (sorted array)
+        int insertionPoint = binaryInsertionPoint(risks, 30);
+        int floorValue = floor(risks, 30);
+        int ceilValue = ceil(risks, 30);
 
-        // Binary Search
-        int index = binarySearch(logs, "accB");
-        int count = countOccurrences(logs, "accB");
-
-        System.out.println("Binary accB: index " + index + ", count = " + count);
+        System.out.println("Insertion index for 30: " + insertionPoint);
+        System.out.println("Floor(30): " + floorValue);
+        System.out.println("Ceil(30): " + ceilValue);
     }
 }
