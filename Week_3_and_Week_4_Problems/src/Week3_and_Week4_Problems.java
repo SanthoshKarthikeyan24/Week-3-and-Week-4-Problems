@@ -2,34 +2,35 @@ import java.util.*;
 
 public class Week3_and_Week4_Problems {
 
-    static class Transaction {
-        String id;
-        double fee;
-        String timestamp;
+    static class Client {
+        String name;
+        int riskScore;
+        double accountBalance;
 
-        Transaction(String id, double fee, String timestamp) {
-            this.id = id;
-            this.fee = fee;
-            this.timestamp = timestamp;
+        Client(String name, int riskScore, double accountBalance) {
+            this.name = name;
+            this.riskScore = riskScore;
+            this.accountBalance = accountBalance;
         }
 
         public String toString() {
-            return id + ":" + fee + "@" + timestamp;
+            return name + ":" + riskScore;
         }
     }
 
-    // Bubble Sort (by fee ascending)
-    static void bubbleSort(List<Transaction> list) {
-        int n = list.size();
-        int passes = 0, swaps = 0;
+    // Bubble Sort (ascending riskScore)
+    static void bubbleSort(Client[] arr) {
+        int n = arr.length;
+        int swaps = 0;
 
         for (int i = 0; i < n - 1; i++) {
             boolean swapped = false;
-            passes++;
 
             for (int j = 0; j < n - i - 1; j++) {
-                if (list.get(j).fee > list.get(j + 1).fee) {
-                    Collections.swap(list, j, j + 1);
+                if (arr[j].riskScore > arr[j + 1].riskScore) {
+                    Client temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
                     swaps++;
                     swapped = true;
                 }
@@ -37,51 +38,45 @@ public class Week3_and_Week4_Problems {
             if (!swapped) break;
         }
 
-        System.out.println("Bubble Sorted: " + list);
-        System.out.println("Passes: " + passes + ", Swaps: " + swaps);
+        System.out.println("Bubble Sorted (Asc): " + Arrays.toString(arr));
+        System.out.println("Swaps: " + swaps);
     }
 
-    // Insertion Sort (fee + timestamp)
-    static void insertionSort(List<Transaction> list) {
-        for (int i = 1; i < list.size(); i++) {
-            Transaction key = list.get(i);
+    // Insertion Sort (descending riskScore)
+    static void insertionSortDesc(Client[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            Client key = arr[i];
             int j = i - 1;
 
-            while (j >= 0 && (list.get(j).fee > key.fee ||
-                    (list.get(j).fee == key.fee &&
-                            list.get(j).timestamp.compareTo(key.timestamp) > 0))) {
-                list.set(j + 1, list.get(j));
+            while (j >= 0 && arr[j].riskScore < key.riskScore) {
+                arr[j + 1] = arr[j];
                 j--;
             }
-            list.set(j + 1, key);
+            arr[j + 1] = key;
         }
 
-        System.out.println("Insertion Sorted: " + list);
+        System.out.println("Insertion Sorted (Desc): " + Arrays.toString(arr));
     }
 
-    // High fee detection
-    static void highFee(List<Transaction> list) {
-        boolean found = false;
-        for (Transaction t : list) {
-            if (t.fee > 50) {
-                System.out.println("High Fee: " + t);
-                found = true;
-            }
+    // Top N highest risk clients
+    static void topRisk(Client[] arr, int n) {
+        System.out.print("Top " + n + " risks: ");
+        for (int i = 0; i < n && i < arr.length; i++) {
+            System.out.print(arr[i].name + "(" + arr[i].riskScore + ") ");
         }
-        if (!found) {
-            System.out.println("High-fee outliers: none");
-        }
+        System.out.println();
     }
 
     public static void main(String[] args) {
-        List<Transaction> tx = new ArrayList<>();
 
-        tx.add(new Transaction("id1", 10.5, "10:00"));
-        tx.add(new Transaction("id2", 25.0, "09:30"));
-        tx.add(new Transaction("id3", 5.0, "10:15"));
+        Client[] clients = {
+                new Client("C", 80, 1000),
+                new Client("A", 20, 2000),
+                new Client("B", 50, 1500)
+        };
 
-        bubbleSort(tx);
-        insertionSort(tx);
-        highFee(tx);
+        bubbleSort(clients);
+        insertionSortDesc(clients);
+        topRisk(clients, 3);
     }
 }
